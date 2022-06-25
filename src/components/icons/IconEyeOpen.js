@@ -1,5 +1,10 @@
 import React from "react";
 
+/**
+ *
+ * @param {*} onClick Handler onClick
+ */
+
 const IconEyeOpen = ({ className = "", onClick = () => {} }) => {
   return (
     <span className={className} onClick={onClick}>
@@ -20,9 +25,9 @@ const IconEyeOpen = ({ className = "", onClick = () => {} }) => {
         <path
           d="M13.5 6.98096C13.5 8.36167 12.3807 9.48096 11 9.48096C9.61929 9.48096 8.5 8.36167 8.5 6.98096C8.5 5.60025 9.61929 4.48096 11 4.48096C12.3807 4.48096 13.5 5.60025 13.5 6.98096Z"
           stroke="#999999"
-          stroke-width="1.4"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="1.4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </svg>
     </span>

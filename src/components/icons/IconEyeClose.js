@@ -1,5 +1,10 @@
 import React from "react";
 
+/**
+ *
+ * @param {*} onClick Handler onClick
+ */
+
 const IconEyeClose = ({ className = "", onClick = () => {} }) => {
   return (
     <span className={className} onClick={onClick}>

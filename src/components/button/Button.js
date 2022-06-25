@@ -1,26 +1,49 @@
 import { LoadingSpinner } from "components/loading";
 import React from "react";
+import PropTypes from "prop-types";
+import { NavLink } from "react-router-dom";
+
+/**
+ * @param {*} onClick Handler onClick
+ * @requires
+ * @param {string} type   Type of 'button' | 'submit'
+ */
 
 const Button = ({
   type = "button",
   children,
-  onClick = () => {},
+  // onClick = () => {},
   ...props
 }) => {
-  const { isLoading } = props;
+  const { isLoading, to } = props;
   const child = !!isLoading ? <LoadingSpinner></LoadingSpinner> : children;
+  if (to !== "" && typeof to === "string") {
+    return (
+      <NavLink to={to}>
+        <button type={type} {...props}>
+          {child}
+        </button>
+      </NavLink>
+    );
+  }
   return (
     <button
       type={type}
-      className={`${
-        props.height || "h-[66px]"
-      } w-full max-w-[350px] mx-auto text-base text-white px-[120px] bg-primary-gradient rounded-lg ${
+      className={`w-full max-w-[300px] h-[66px] mx-auto flex items-center justify-center text-base text-white bg-primary-gradient rounded-lg font-semibold ${
         props.disabled ? "opacity-50 pointer-events-none" : ""
-      } flex items-center justify-center`}
+      }`}
+      {...props}
     >
       {child}
     </button>
   );
+};
+
+Button.propTypes = {
+  type: PropTypes.oneOf(["submit", "button"]),
+  isLoading: PropTypes.bool,
+  onClick: PropTypes.func,
+  children: PropTypes.node,
 };
 
 export default Button;
