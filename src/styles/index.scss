@@ -22,3 +22,14 @@ ul {
   margin: 0 auto;
   padding: 0 20px;
 }
+.heading::before {
+  content: "";
+  width: 50px;
+  height: 4px;
+  background-color: #00d1ed;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(0, -150%);
+  border-radius: 1px;
+}

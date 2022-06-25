@@ -3,7 +3,7 @@ import React from "react";
 
 const HomeBanner = () => {
   return (
-    <div className="min-h-[520px] bg-primary-gradient px-10">
+    <div className="min-h-[520px] bg-primary-gradient px-10 mb-10">
       <div className="container">
         <div className="flex items-center justify-between py-14">
           <div className="text-white">
