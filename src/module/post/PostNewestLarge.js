@@ -1,4 +1,8 @@
 import React from "react";
+import PostCategory from "./PostCategory";
+import PostImage from "./PostImage";
+import PostMeta from "./PostMeta";
+import PostTitle from "./PostTitle";
 // import styled from "styled-components";
 // const PostNewestLargeStyles = styled.div`
 //   .post {
@@ -51,24 +55,15 @@ import React from "react";
 const PostNewestLarge = () => {
   return (
     <div>
-      <div className="block mb-4 h-[433px]">
-        <img
-          src="https://images.unsplash.com/photo-1510519138101-570d1dca3d66?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2294&q=80"
-          alt=""
-          className="w-full h-full object-cover rounded-2xl"
-        />
-      </div>
-      <div className="inline-block px-2 py-3 rounded-lg text-[#6b6b6b] text-sm font-semibold mb-4 bg-[#f3edff]">
-        Kiến thức
-      </div>
-      <h3 className="block text-[22px] font-bold leading-normal mb-3">
+      <PostImage
+        url="https://images.unsplash.com/photo-1510519138101-570d1dca3d66?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2294&q=80"
+        className="mb-4 h-[433px]"
+      ></PostImage>
+      <PostCategory className="mb-[10px]">Kiến Thức</PostCategory>
+      <PostTitle size="big" className="mb-[10px]">
         Hướng dẫn setup phòng cực chill dành cho người mới toàn tập
-      </h3>
-      <div className="flex items-center gap-3 text-sm font-semibold ml-auto">
-        <span className="post-time">Mar 23</span>
-        <span className="inline-block w-1 h-1 rounded-full bg-current"></span>
-        <span className="post-author">Andiez Le</span>
-      </div>
+      </PostTitle>
+      <PostMeta></PostMeta>
     </div>
   );
 };

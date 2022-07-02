@@ -1,12 +1,10 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button } from "components/button";
 import { Field } from "components/field";
-import { IconEyeClose, IconEyeOpen } from "components/icons";
 import { Input } from "components/input";
 import { Label } from "components/label";
 import { useAuth } from "contexts/auth-context";
 import React from "react";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { toast } from "react-toastify";
@@ -15,6 +13,7 @@ import { useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "firebase-app/firebase-config";
+import InputPasswordToggle from "components/input/InputPasswordToggle";
 
 const schema = yup.object({
   email: yup
@@ -30,12 +29,11 @@ const SignInPage = () => {
     handleSubmit,
     formState: { isSubmitting, isValid, errors },
   } = useForm({ resolver: yupResolver(schema) });
-  const [showPassword, setShowPassword] = useState(false);
   const { userInfo } = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
     document.title = "Sign in to Blog";
-    // if (userInfo?.email) navigate("/");
+    if (userInfo?.email) navigate("/");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const handleSignIn = async (values) => {
@@ -69,23 +67,7 @@ const SignInPage = () => {
         </Field>
         <Field>
           <Label htmlFor="password">Password</Label>
-          <Input
-            name="password"
-            type={showPassword ? "text" : "password"}
-            placeholder="Please enter your password"
-            control={control}
-            hasIcon
-          >
-            {showPassword ? (
-              <IconEyeOpen
-                onClick={() => setShowPassword(!showPassword)}
-              ></IconEyeOpen>
-            ) : (
-              <IconEyeClose
-                onClick={() => setShowPassword(!showPassword)}
-              ></IconEyeClose>
-            )}
-          </Input>
+          <InputPasswordToggle control={control}></InputPasswordToggle>
         </Field>
         <div className="mb-5 font-medium">
           Do not have an account?{" "}

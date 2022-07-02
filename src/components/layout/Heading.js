@@ -19,7 +19,7 @@ import React from "react";
 // `;
 const Heading = ({ children }) => {
   return (
-    <h2 className="text-tertiary text-[28px] relative mb-[30px] heading">
+    <h2 className="text-tertiary text-[28px] font-semibold relative mb-[30px] heading">
       {children}
     </h2>
   );

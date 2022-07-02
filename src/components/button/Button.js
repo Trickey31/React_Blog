@@ -9,18 +9,13 @@ import { NavLink } from "react-router-dom";
  * @param {string} type   Type of 'button' | 'submit'
  */
 
-const Button = ({
-  type = "button",
-  children,
-  // onClick = () => {},
-  ...props
-}) => {
+const Button = ({ type = "button", children, className = "", ...props }) => {
   const { isLoading, to } = props;
   const child = !!isLoading ? <LoadingSpinner></LoadingSpinner> : children;
   if (to !== "" && typeof to === "string") {
     return (
       <NavLink to={to}>
-        <button type={type} {...props}>
+        <button type={type} className={className} {...props}>
           {child}
         </button>
       </NavLink>
@@ -31,7 +26,7 @@ const Button = ({
       type={type}
       className={`w-full max-w-[300px] h-[66px] mx-auto flex items-center justify-center text-base text-white bg-primary-gradient rounded-lg font-semibold ${
         props.disabled ? "opacity-50 pointer-events-none" : ""
-      }`}
+      } ${className}`}
       {...props}
     >
       {child}

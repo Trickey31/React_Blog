@@ -1,4 +1,8 @@
 import React from "react";
+import PostCategory from "./PostCategory";
+import PostImage from "./PostImage";
+import PostMeta from "./PostMeta";
+import PostTitle from "./PostTitle";
 // import styled from "styled-components";
 // const PostNewestItemStyles = styled.div`
 //   display: flex;
@@ -62,26 +66,19 @@ import React from "react";
 // `;
 const PostNewestItem = () => {
   return (
-    <div className="flex items-center gap-5 mb-7 pb-7 border-b">
-      <div className="block flex-shrink-0 w-[180px] h-[130px]">
-        <img
-          src="https://images.unsplash.com/photo-1510519138101-570d1dca3d66?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2294&q=80"
-          alt=""
-          className="w-full h-full object-cover rounded-xl"
-        />
-      </div>
+    <div className="flex items-center gap-5 mb-7 pb-7 border-b last:m-0 last:border-0">
+      <PostImage
+        url="https://images.unsplash.com/photo-1510519138101-570d1dca3d66?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2294&q=80"
+        className="flex-shrink-0 w-[180px] h-[130px]"
+      ></PostImage>
       <div className="post-content">
-        <span className="inline-block p-2 rounded-lg text-[#6b6b6b] text-xs font-semibold bg-white mb-2">
-          Kiến thức
-        </span>
-        <h3 className="font-bold block text-base mb-2">
+        <PostCategory type="secondary" className="mb-2">
+          Kiến Thức
+        </PostCategory>
+        <PostTitle>
           Hướng dẫn setup phòng cực chill dành cho người mới toàn tập
-        </h3>
-        <div className="flex items-center gap-3 text-sm font-semibold ml-auto text-[#6b6b6b]">
-          <span className="post-time">Mar 23</span>
-          <span className="inline-block w-1 h-1 bg-current rounded-full"></span>
-          <span className="post-author">Andiez Le</span>
-        </div>
+        </PostTitle>
+        <PostMeta></PostMeta>
       </div>
     </div>
   );

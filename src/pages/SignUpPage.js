@@ -1,9 +1,8 @@
 import { Button } from "components/button";
 import { Field } from "components/field";
-import { IconEyeClose, IconEyeOpen } from "components/icons";
 import { Input } from "components/input";
 import { Label } from "components/label";
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -13,6 +12,7 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "firebase-app/firebase-config";
 import AuthenticationPage from "./AuthenticationPage";
 import { NavLink } from "react-router-dom";
+import InputPasswordToggle from "components/input/InputPasswordToggle";
 
 const schema = yup.object({
   fullname: yup.string().required("Please enter your fullname"),
@@ -31,20 +31,13 @@ const SignUpPage = () => {
     control,
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
-    watch,
-    reset,
   } = useForm({ resolver: yupResolver(schema) });
-  const [showPassword, setShowPassword] = useState(false);
   useEffect(() => {
     document.title = "Sign up to Blog";
   }, []);
   const handleSignUp = async (values) => {
     if (!isValid) return;
-    const user = await createUserWithEmailAndPassword(
-      auth,
-      values.email,
-      values.password
-    );
+    await createUserWithEmailAndPassword(auth, values.email, values.password);
     await updateProfile(auth.currentUser, {
       displayName: values.fullname,
     });
@@ -85,23 +78,7 @@ const SignUpPage = () => {
         </Field>
         <Field>
           <Label htmlFor="password">Password</Label>
-          <Input
-            name="password"
-            type={showPassword ? "text" : "password"}
-            placeholder="Please enter your password"
-            control={control}
-            hasIcon
-          >
-            {showPassword ? (
-              <IconEyeOpen
-                onClick={() => setShowPassword(!showPassword)}
-              ></IconEyeOpen>
-            ) : (
-              <IconEyeClose
-                onClick={() => setShowPassword(!showPassword)}
-              ></IconEyeClose>
-            )}
-          </Input>
+          <InputPasswordToggle control={control}></InputPasswordToggle>
         </Field>
         <div className="mb-5 font-medium">
           Already have an account?{" "}
@@ -109,12 +86,7 @@ const SignUpPage = () => {
             Sign in
           </NavLink>
         </div>
-        <Button
-          type="submit"
-          // className="w-full max-w-[300px] h-[66px] mx-auto flex items-center justify-center text-base text-white bg-primary-gradient rounded-lg font-semibold"
-          isLoading={isSubmitting}
-          disabled={isSubmitting}
-        >
+        <Button type="submit" isLoading={isSubmitting} disabled={isSubmitting}>
           Sign Up
         </Button>
       </form>

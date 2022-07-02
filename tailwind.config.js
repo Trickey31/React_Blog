@@ -15,6 +15,8 @@ module.exports = {
       backgroundColor: {
         grayLight: "#E7ECF3",
         accent: "#00D1ED",
+        secondary: "#A4D96C",
+        greenGradient: `rgb(29, 192, 113)`,
       },
       backgroundImage: {
         "primary-gradient": `linear-gradient(107.61deg, #00A7B4 15.59%, #A4D96C 87.25%)`,

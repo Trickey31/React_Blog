@@ -1,4 +1,7 @@
 import React from "react";
+import PostImage from "./PostImage";
+import PostMeta from "./PostMeta";
+import PostTitle from "./PostTitle";
 // import styled from "styled-components";
 // const PostItemStyles = styled.div`
 //   display: flex;
@@ -56,24 +59,17 @@ import React from "react";
 const PostItem = () => {
   return (
     <div className="flex flex-col items-start">
-      <div className="h-[202px] w-full mb-5 block">
-        <img
-          src="https://images.unsplash.com/photo-1570993492881-25240ce854f4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2290&q=80"
-          alt=""
-          className="w-full h-full object-cover rounded-2xl"
-        />
-      </div>
+      <PostImage
+        url="https://images.unsplash.com/photo-1570993492881-25240ce854f4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2290&q=80"
+        className="h-[202px] mb-5"
+      ></PostImage>
       <div className="inline-block p-2 rounded-lg text-[#6b6b6b] text-sm font-semibold bg-[#f3edff] mb-4">
         Kiến thức
       </div>
-      <h3 className="block text-[18px] leading-normal font-bold mb-2">
+      <PostTitle className="mb-2">
         Hướng dẫn setup phòng cực chill dành cho người mới toàn tập
-      </h3>
-      <div className="flex items-center gap-3 text-sm font-semibold mt-auto text-[#6b6b6b]">
-        <span className="post-time">Mar 23</span>
-        <span className="inline-block w-1 h-1 bg-current rounded-full"></span>
-        <span className="post-author">Andiez Le</span>
-      </div>
+      </PostTitle>
+      <PostMeta></PostMeta>
     </div>
   );
 };
