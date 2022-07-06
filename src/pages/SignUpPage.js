@@ -9,10 +9,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "firebase-app/firebase-config";
+import { auth, db } from "firebase-app/firebase-config";
 import AuthenticationPage from "./AuthenticationPage";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import InputPasswordToggle from "components/input/InputPasswordToggle";
+import { doc, setDoc } from "firebase/firestore";
+import slugify from "slugify";
 
 const schema = yup.object({
   fullname: yup.string().required("Please enter your fullname"),
@@ -27,6 +29,7 @@ const schema = yup.object({
 });
 
 const SignUpPage = () => {
+  const navigate = useNavigate();
   const {
     control,
     handleSubmit,
@@ -41,7 +44,14 @@ const SignUpPage = () => {
     await updateProfile(auth.currentUser, {
       displayName: values.fullname,
     });
+    await setDoc(doc(db, "users", auth.currentUser.uid), {
+      fullname: values.fullname,
+      email: values.email,
+      password: values.password,
+      username: slugify(values.fullname, { lower: true }),
+    });
     toast.success("Successfull");
+    navigate("/");
   };
   useEffect(() => {
     const arrErr = Object.values(errors);

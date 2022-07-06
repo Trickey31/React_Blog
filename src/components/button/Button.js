@@ -9,8 +9,14 @@ import { NavLink } from "react-router-dom";
  * @param {string} type   Type of 'button' | 'submit'
  */
 
-const Button = ({ type = "button", children, className = "", ...props }) => {
-  const { isLoading, to } = props;
+const Button = ({
+  type = "button",
+  children,
+  className = "",
+  isLoading,
+  to,
+  ...props
+}) => {
   const child = !!isLoading ? <LoadingSpinner></LoadingSpinner> : children;
   if (to !== "" && typeof to === "string") {
     return (

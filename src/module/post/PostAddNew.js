@@ -10,27 +10,103 @@ import { postStatus } from "utils/constant";
 import slugify from "slugify";
 import ImageUpload from "components/image/ImageUpload";
 import useFirebaseImage from "hooks/useFirebaseImage";
+import Toggle from "components/toggle/Toggle";
+import { useEffect } from "react";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  query,
+  serverTimestamp,
+  where,
+} from "firebase/firestore";
+import { db } from "firebase-app/firebase-config";
+import { useState } from "react";
+import Select from "components/dropdown/Select";
+import List from "components/dropdown/List";
+import { useAuth } from "contexts/auth-context";
+import { toast } from "react-toastify";
 
 const PostAddNew = () => {
-  const { control, watch, setValue, handleSubmit, getValues } = useForm({
+  const { control, watch, setValue, handleSubmit, getValues, reset } = useForm({
     mode: "onChange",
     defaultValues: {
       title: "",
       slug: "",
       status: 2,
-      category: "",
+      categoryId: "",
+      hot: false,
+      image: "",
     },
   });
+  const { userInfo } = useAuth();
   const watchStatus = watch("status");
-  // const watchCategory = watch("category");
+  const watchHot = watch("hot");
+  const {
+    image,
+    progress,
+    handleResetUpload,
+    handleDeleteImage,
+    handleSelectImage,
+  } = useFirebaseImage(getValues, setValue);
+  const [categories, setCategories] = useState([]);
+  const [selectCategory, setSelectCategory] = useState("");
+  const [loading, setLoading] = useState(false);
   const addNewPost = async (values) => {
-    const cloneValues = { ...values };
-    cloneValues.slug = slugify(cloneValues.slug || cloneValues.title);
-    cloneValues.status = values.status;
+    setLoading(true);
+    try {
+      const cloneValues = { ...values };
+      cloneValues.slug = slugify(cloneValues.slug || cloneValues.title, {
+        lower: true,
+      });
+      cloneValues.status = Number(values.status);
+      const colRef = collection(db, "posts");
+      await addDoc(colRef, {
+        ...cloneValues,
+        image,
+        userId: userInfo.uid,
+        createdAt: serverTimestamp(),
+      });
+      toast.success("Create successfully");
+      reset({
+        title: "",
+        slug: "",
+        status: 2,
+        categoryId: "",
+        hot: false,
+        image: "",
+      });
+      setSelectCategory({});
+      handleResetUpload();
+    } catch (error) {
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const { image, progress, handleDeleteImage, handleSelectImage } =
-    useFirebaseImage(getValues, setValue);
+  useEffect(() => {
+    async function getData() {
+      const colRef = collection(db, "categories");
+      const q = query(colRef, where("status", "==", 1));
+
+      let result = [];
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) =>
+        result.push({
+          id: doc.id,
+          ...doc.data(),
+        })
+      );
+      setCategories(result);
+    }
+    getData();
+  }, []);
+
+  const handleClickCategory = (item) => {
+    setValue("categoryId", item.id);
+    setSelectCategory(item);
+  };
 
   return (
     <div>
@@ -67,6 +143,34 @@ const PostAddNew = () => {
               image={image}
             ></ImageUpload>
           </Field>
+          <Field></Field>
+          <Field>
+            <Label>Author</Label>
+            <Input control={control} placeholder="Find the author"></Input>
+          </Field>
+          <Field>
+            <Label>Category</Label>
+            <Dropdown>
+              <Select
+                placeholder={`${
+                  selectCategory.name || "Please select an option"
+                }`}
+              ></Select>
+              <List>
+                {categories.length > 0 &&
+                  categories.map((item) => (
+                    <Dropdown.Option
+                      key={item.id}
+                      onClick={() => handleClickCategory(item)}
+                    >
+                      {item.name}
+                    </Dropdown.Option>
+                  ))}
+              </List>
+            </Dropdown>
+          </Field>
+        </div>
+        <div className="grid grid-cols-2 gap-x-10 mb-10">
           <Field>
             <Label>Status</Label>
             <div className="flex items-center gap-x-5">
@@ -97,24 +201,19 @@ const PostAddNew = () => {
             </div>
           </Field>
           <Field>
-            <Label>Author</Label>
-            <Input control={control} placeholder="Find the author"></Input>
+            <Label>Feature post</Label>
+            <Toggle
+              on={watchHot === true}
+              onClick={() => setValue("hot", !watchHot)}
+            ></Toggle>
           </Field>
         </div>
-        <div className="grid grid-cols-2 gap-x-10 mb-10">
-          <Field>
-            <Label>Category</Label>
-            <Dropdown>
-              <Dropdown.Option>Knowledge</Dropdown.Option>
-              <Dropdown.Option>Blockchain</Dropdown.Option>
-              <Dropdown.Option>Setup</Dropdown.Option>
-              <Dropdown.Option>Nature</Dropdown.Option>
-              <Dropdown.Option>Developer</Dropdown.Option>
-            </Dropdown>
-          </Field>
-          <Field></Field>
-        </div>
-        <Button type="submit" className="mx-auto">
+        <Button
+          type="submit"
+          className="mx-auto"
+          isLoading={loading}
+          disabled={loading}
+        >
           Add new post
         </Button>
       </form>
