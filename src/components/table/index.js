@@ -1,2 +1,2 @@
-const { default: Table } = require("./Table");
+import Table from "./Table";
 export { Table };

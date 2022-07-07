@@ -18,31 +18,21 @@ const PostManage = () => {
         </div>
       </div>
       <Table>
-        <thead className="bg-[#f7f7f8]">
+        <thead>
           <tr>
-            <th className="align-middle px-[30px] py-5 font-semibold text-left"></th>
-            <th className="align-middle px-[30px] py-5 font-semibold text-left">
-              Id
-            </th>
-            <th className="align-middle px-[30px] py-5 font-semibold text-left">
-              Post
-            </th>
-            <th className="align-middle px-[30px] py-5 font-semibold text-left">
-              Category
-            </th>
-            <th className="align-middle px-[30px] py-5 font-semibold text-left">
-              Author
-            </th>
-            <th className="align-middle px-[30px] py-5 font-semibold text-left">
-              Actions
-            </th>
+            <th></th>
+            <th>Id</th>
+            <th>Post</th>
+            <th>Category</th>
+            <th>Author</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td className="align-middle py-[30px] px-[15px]"></td>
-            <td className="align-middle py-[30px] px-[15px]">01</td>
-            <td className="align-middle py-[30px] px-[15px]">
+            <td></td>
+            <td>01</td>
+            <td>
               <div className="flex items-center gap-x-3">
                 <img
                   src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1548&q=80"
@@ -57,13 +47,13 @@ const PostManage = () => {
                 </div>
               </div>
             </td>
-            <td className="align-middle py-[30px] px-[15px]">
+            <td>
               <span className="text-gray-500">Camera Gear</span>
             </td>
-            <td className="align-middle py-[30px] px-[15px]">
+            <td>
               <span className="text-gray-500">Evondev</span>
             </td>
-            <td className="align-middle py-[30px] px-[15px]">
+            <td>
               <div className="flex items-center gap-x-3 text-gray-500">
                 <span className="flex items-center justify-center w-10 h-10 border border-gray-200 rounded cursor-pointer">
                   <svg

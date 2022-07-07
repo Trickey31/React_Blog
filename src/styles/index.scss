@@ -126,3 +126,21 @@ ul {
   padding: 40px 20px;
   gap: 0 40px;
 }
+.form-layout {
+  @apply grid grid-cols-1 lg:grid-cols-2 lg:gap-x-10 mb-5 lg:mb-10;
+}
+thead {
+  background-color: #f7f7f8;
+}
+th,
+td {
+  vertical-align: middle;
+}
+th {
+  padding: 20px 30px;
+  text-align: left;
+  font-weight: 600;
+}
+td {
+  padding: 15px 30px;
+}
