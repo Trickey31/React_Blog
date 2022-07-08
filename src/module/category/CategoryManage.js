@@ -2,14 +2,18 @@ import { ActionDelete, ActionEdit, ActionView } from "components/action";
 import { LabelStatus } from "components/label";
 import { Table } from "components/table";
 import { db } from "firebase-app/firebase-config";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
 import DashboardHeading from "module/dashboard/DashboardHeading";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { categoryStatus } from "utils/constant";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+import { Button } from "components/button";
 
 const CategoryManage = () => {
+  const navigate = useNavigate();
   const [categoryList, setCategoryList] = useState([]);
   useEffect(() => {
     const colRef = collection(db, "categories");
@@ -24,13 +28,34 @@ const CategoryManage = () => {
       setCategoryList(results);
     });
   }, []);
-  console.log(categoryList);
+  const handleDeleteCategory = async (docId) => {
+    const colRef = doc(db, "categories", docId);
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        Swal.fire("Deleted!", "Your file has been deleted.", "success");
+        await deleteDoc(colRef);
+      }
+    });
+  };
   return (
     <div>
-      <DashboardHeading
-        title="Categories"
-        desc="Manage your category"
-      ></DashboardHeading>
+      <DashboardHeading title="Categories" desc="Manage your category">
+        <Button
+          type="button"
+          to="/manage/add-category"
+          className="h-[60px] mx-auto px-[25px] flex items-center justify-center text-base text-white bg-primary-gradient rounded-lg font-semibold"
+        >
+          Create category
+        </Button>
+      </DashboardHeading>
       <Table>
         <thead>
           <tr>
@@ -61,8 +86,14 @@ const CategoryManage = () => {
                 <td>
                   <div className="flex gap-5 text-gray-400">
                     <ActionView></ActionView>
-                    <ActionEdit></ActionEdit>
-                    <ActionDelete></ActionDelete>
+                    <ActionEdit
+                      onClick={() =>
+                        navigate(`/manage/update-category?id=${category.id}`)
+                      }
+                    ></ActionEdit>
+                    <ActionDelete
+                      onClick={() => handleDeleteCategory(category.id)}
+                    ></ActionDelete>
                   </div>
                 </td>
               </tr>
