@@ -2,7 +2,18 @@ import { ActionDelete, ActionEdit, ActionView } from "components/action";
 import { LabelStatus } from "components/label";
 import { Table } from "components/table";
 import { db } from "firebase-app/firebase-config";
-import { collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  limit,
+  onSnapshot,
+  orderBy,
+  query,
+  startAfter,
+  where,
+} from "firebase/firestore";
 import DashboardHeading from "module/dashboard/DashboardHeading";
 import React from "react";
 import { useEffect } from "react";
@@ -11,13 +22,22 @@ import { categoryStatus } from "utils/constant";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { Button } from "components/button";
+import { debounce } from "lodash";
 
 const CategoryManage = () => {
   const navigate = useNavigate();
   const [categoryList, setCategoryList] = useState([]);
+  const [filter, setFilter] = useState("");
   useEffect(() => {
     const colRef = collection(db, "categories");
-    onSnapshot(colRef, (snapshot) => {
+    const newRef = filter
+      ? query(
+          colRef,
+          where("name", ">=", filter),
+          where("name", "<=", filter + "utf8")
+        )
+      : query(colRef, limit(1));
+    onSnapshot(newRef, (snapshot) => {
       const results = [];
       snapshot.forEach((doc) =>
         results.push({
@@ -27,7 +47,7 @@ const CategoryManage = () => {
       );
       setCategoryList(results);
     });
-  }, []);
+  }, [filter]);
   const handleDeleteCategory = async (docId) => {
     const colRef = doc(db, "categories", docId);
     Swal.fire({
@@ -45,6 +65,34 @@ const CategoryManage = () => {
       }
     });
   };
+  const handleInputFilter = debounce((e) => setFilter(e.target.value), 500);
+  const handleLoadMoreCategory = async () => {
+    const first = query(collection(db, "categories"), limit(1));
+    const documentSnapshots = await getDocs(first);
+
+    // Get the last visible document
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    console.log("last", lastVisible.data());
+
+    // Construct a new query starting at this document,
+    // get the next 25 cities.
+    const nextRef = query(
+      collection(db, "categories"),
+      startAfter(lastVisible),
+      limit(1)
+    );
+    onSnapshot(nextRef, (snapshot) => {
+      const results = [];
+      snapshot.forEach((doc) =>
+        results.push({
+          id: doc.id,
+          ...doc.data(),
+        })
+      );
+      setCategoryList(results);
+    });
+  };
   return (
     <div>
       <DashboardHeading title="Categories" desc="Manage your category">
@@ -56,6 +104,14 @@ const CategoryManage = () => {
           Create category
         </Button>
       </DashboardHeading>
+      <div className="flex justify-end mb-10">
+        <input
+          type="text"
+          placeholder="Search category..."
+          className="py-4 px-6 border border-gray-300 outline-none rounded-lg"
+          onChange={handleInputFilter}
+        />
+      </div>
       <Table>
         <thead>
           <tr>
@@ -100,6 +156,9 @@ const CategoryManage = () => {
             ))}
         </tbody>
       </Table>
+      <div className="mt-10">
+        <button onClick={handleLoadMoreCategory}>Load more</button>
+      </div>
     </div>
   );
 };

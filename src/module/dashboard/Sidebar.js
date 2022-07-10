@@ -140,14 +140,10 @@ const sidebarLinks = [
 const Sidebar = () => {
   return (
     <div className="w-[300px] bg-white rounded-xl shadow-[10px 10px 20px rgba(218 213 213 / 0.15)]">
-      <div className="flex items-center font-semibold gap-5 mb-5 pt-5 px-5 pb-0">
-        <img srcSet="/logo.png 2x" alt="" className="max-w-[40px]" />
-        <span>Monkey Blogging</span>
-      </div>
       {sidebarLinks.map((link) => (
         <NavLink
           to={link.url}
-          className="flex items-center gap-5 px-[14px] py-5 text-[#808191] font-medium mb-5 cursor-pointer hover:bg-[#f1fbf7] hover:text-primary"
+          className="flex items-center gap-5 px-[14px] py-5 text-[#808191] font-medium mb-5 cursor-pointer hover:bg-[#f1fbf7] hover:text-primary active:bg-[#f1fbf7] active:text-primary"
           key={link.title}
         >
           <span className="menu-icon">{link.icon}</span>

@@ -31,7 +31,7 @@ const CategoryAddNew = () => {
   const handleAddNewCategory = async (values) => {
     if (!isValid) return;
     const newValues = { ...values };
-    newValues.slug = slugify(newValues.name || newValues.slug, {
+    newValues.slug = slugify(newValues.slug || newValues.name, {
       lower: true,
     });
     newValues.status = Number(newValues.status);
@@ -108,7 +108,6 @@ const CategoryAddNew = () => {
           </Field>
         </div>
         <Button
-          kind="primary"
           className="mx-auto w-[300px]"
           type="submit"
           disabled={isSubmitting}
