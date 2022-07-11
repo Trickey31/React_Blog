@@ -102,7 +102,6 @@ const CategoryManage = () => {
 
     const lastVisible =
       documentSnapshots.docs[documentSnapshots.docs.length - 1];
-    console.log("last", lastVisible.data());
     setLastDoc(lastVisible);
   };
   return (
