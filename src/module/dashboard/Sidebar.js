@@ -1,31 +1,10 @@
+import { auth } from "firebase-app/firebase-config";
+import { signOut } from "firebase/auth";
 import React from "react";
 import { NavLink } from "react-router-dom";
-// import styled from "styled-components";
 // const SidebarStyles = styled.div`
-//   width: 300px;
-//   background: #ffffff;
 //   box-shadow: 10px 10px 20px rgba(218, 213, 213, 0.15);
-//   border-radius: 12px;
-//   .sidebar-logo {
-//     display: flex;
-//     align-items: center;
-//     font-weight: 600;
-//     gap: 0 20px;
-//     img {
-//       max-width: 40px;
-//     }
-//     margin-bottom: 20px;
-//     padding: 20px 20px 0;
-//   }
 //   .menu-item {
-//     display: flex;
-//     align-items: center;
-//     gap: 20px;
-//     padding: 14px 20px;
-//     font-weight: 500;
-//     color: ${(props) => props.theme.gray80};
-//     margin-bottom: 20px;
-//     cursor: pointer;
 //     &.active,
 //     &:hover {
 //       background: #f1fbf7;
@@ -133,23 +112,36 @@ const sidebarLinks = [
         />
       </svg>
     ),
-    onClick: () => {},
+    onClick: () => signOut(auth),
   },
 ];
 
 const Sidebar = () => {
   return (
     <div className="w-[300px] bg-white rounded-xl shadow-[10px 10px 20px rgba(218 213 213 / 0.15)]">
-      {sidebarLinks.map((link) => (
-        <NavLink
-          to={link.url}
-          className="flex items-center gap-5 px-[14px] py-5 text-[#808191] font-medium mb-5 cursor-pointer hover:bg-[#f1fbf7] hover:text-primary active:bg-[#f1fbf7] active:text-primary"
-          key={link.title}
-        >
-          <span className="menu-icon">{link.icon}</span>
-          <span className="menu-text">{link.title}</span>
-        </NavLink>
-      ))}
+      {sidebarLinks.map((link) => {
+        if (link.onClick)
+          return (
+            <div
+              className="flex items-center gap-5 px-[14px] py-5 text-[#808191] font-medium mb-5 cursor-pointer hover:bg-[#f1fbf7] hover:text-primary active:bg-[#f1fbf7] active:text-primary"
+              key={link.title}
+              onClick={link.onClick}
+            >
+              <span className="menu-icon">{link.icon}</span>
+              <span className="menu-text">{link.title}</span>
+            </div>
+          );
+        return (
+          <NavLink
+            to={link.url}
+            className="flex items-center gap-5 px-[14px] py-5 text-[#808191] font-medium mb-5 cursor-pointer hover:bg-[#f1fbf7] hover:text-primary active:bg-[#f1fbf7] active:text-primary"
+            key={link.title}
+          >
+            <span className="menu-icon">{link.icon}</span>
+            <span className="menu-text">{link.title}</span>
+          </NavLink>
+        );
+      })}
     </div>
   );
 };

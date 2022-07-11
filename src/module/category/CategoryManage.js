@@ -9,7 +9,6 @@ import {
   getDocs,
   limit,
   onSnapshot,
-  orderBy,
   query,
   startAfter,
   where,
@@ -24,29 +23,46 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "components/button";
 import { debounce } from "lodash";
 
+const CATEGORY_PER_PAGE = 1;
+
 const CategoryManage = () => {
   const navigate = useNavigate();
   const [categoryList, setCategoryList] = useState([]);
   const [filter, setFilter] = useState("");
+  const [lastDoc, setLastDoc] = useState();
+  const [total, setTotal] = useState(0);
   useEffect(() => {
-    const colRef = collection(db, "categories");
-    const newRef = filter
-      ? query(
-          colRef,
-          where("name", ">=", filter),
-          where("name", "<=", filter + "utf8")
-        )
-      : query(colRef, limit(1));
-    onSnapshot(newRef, (snapshot) => {
-      const results = [];
-      snapshot.forEach((doc) =>
-        results.push({
-          id: doc.id,
-          ...doc.data(),
-        })
-      );
-      setCategoryList(results);
-    });
+    async function fetchData() {
+      const colRef = collection(db, "categories");
+      const newRef = filter
+        ? query(
+            colRef,
+            where("name", ">=", filter),
+            where("name", "<=", filter + "utf8")
+          )
+        : query(colRef, limit(CATEGORY_PER_PAGE));
+      const documentSnapshots = await getDocs(newRef);
+
+      const lastVisible =
+        documentSnapshots.docs[documentSnapshots.docs.length - 1];
+      setLastDoc(lastVisible);
+
+      onSnapshot(colRef, (snapshot) => {
+        setTotal(snapshot.size);
+      });
+
+      onSnapshot(newRef, (snapshot) => {
+        const results = [];
+        snapshot.forEach(
+          results.push({
+            id: doc.id,
+            ...doc.data(),
+          })
+        );
+        setCategoryList(results);
+      });
+    }
+    fetchData();
   }, [filter]);
   const handleDeleteCategory = async (docId) => {
     const colRef = doc(db, "categories", docId);
@@ -67,20 +83,10 @@ const CategoryManage = () => {
   };
   const handleInputFilter = debounce((e) => setFilter(e.target.value), 500);
   const handleLoadMoreCategory = async () => {
-    const first = query(collection(db, "categories"), limit(1));
-    const documentSnapshots = await getDocs(first);
-
-    // Get the last visible document
-    const lastVisible =
-      documentSnapshots.docs[documentSnapshots.docs.length - 1];
-    console.log("last", lastVisible.data());
-
-    // Construct a new query starting at this document,
-    // get the next 25 cities.
     const nextRef = query(
       collection(db, "categories"),
-      startAfter(lastVisible),
-      limit(1)
+      startAfter(lastDoc),
+      limit(CATEGORY_PER_PAGE)
     );
     onSnapshot(nextRef, (snapshot) => {
       const results = [];
@@ -90,8 +96,14 @@ const CategoryManage = () => {
           ...doc.data(),
         })
       );
-      setCategoryList(results);
+      setCategoryList([...categoryList, ...results]);
     });
+    const documentSnapshots = await getDocs(nextRef);
+
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    console.log("last", lastVisible.data());
+    setLastDoc(lastVisible);
   };
   return (
     <div>
@@ -156,9 +168,13 @@ const CategoryManage = () => {
             ))}
         </tbody>
       </Table>
-      <div className="mt-10">
-        <button onClick={handleLoadMoreCategory}>Load more</button>
-      </div>
+      {total > categoryList.length && (
+        <div className="mt-10">
+          <Button onClick={handleLoadMoreCategory} className="max-w-[150px]">
+            Load more
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
