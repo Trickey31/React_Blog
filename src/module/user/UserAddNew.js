@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import slugify from "slugify";
 import { userRole, userStatus } from "utils/constant";
+import * as Yup from "yup";
 
 const UserAddNew = () => {
   const {
