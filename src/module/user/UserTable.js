@@ -1,9 +1,11 @@
 import { ActionDelete, ActionView } from "components/action";
+import { LabelStatus } from "components/label";
 import { Table } from "components/table";
 import { db } from "firebase-app/firebase-config";
 import { collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { userRole, userStatus } from "utils/constant";
 
 const UserTable = () => {
   const [userList, setUserList] = useState([]);
@@ -37,6 +39,30 @@ const UserTable = () => {
       }
     });
   };
+  const renderUserStatus = (status) => {
+    switch (status) {
+      case userStatus.ACTIVE:
+        return <LabelStatus type="success">Active</LabelStatus>;
+      case userStatus.BAN:
+        return <LabelStatus type="danger">Ban</LabelStatus>;
+
+      default:
+        break;
+    }
+  };
+  const renderUserRole = (role) => {
+    switch (role) {
+      case userRole.ADMIN:
+        return <LabelStatus type="success">Admin</LabelStatus>;
+      case userRole.MOD:
+        return <LabelStatus type="success">Mod</LabelStatus>;
+      case userRole.USER:
+        return <LabelStatus type="success">User</LabelStatus>;
+
+      default:
+        break;
+    }
+  };
   return (
     <div>
       <Table>
@@ -46,6 +72,7 @@ const UserTable = () => {
             <th>Info</th>
             <th>Username</th>
             <th>Email</th>
+            <th>Status</th>
             <th>Role</th>
             <th>Action</th>
           </tr>
@@ -58,14 +85,16 @@ const UserTable = () => {
                 <td className="whitespace-nowrap">
                   <div className="flex items-center gap-3">
                     <img
-                      src="https://images.unsplash.com/photo-1657491783539-c0b187145fc4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1228&q=80"
+                      src={user?.avatar}
                       alt=""
                       className="w-10 h-10 object-cover rounded-full flex-shrink-0"
                     />
                     <div className="flex-1">
                       <h3>{user.fullname}</h3>
                       <time className="text-sm text-gray-400">
-                        {new Date().toLocaleDateString()}
+                        {new Date(
+                          user?.createdAt?.seconds * 1000
+                        ).toLocaleDateString("vi-VI")}
                       </time>
                     </div>
                   </div>
@@ -73,17 +102,9 @@ const UserTable = () => {
                 <td>
                   <em className="text-gray-400">{user?.username}</em>
                 </td>
-                <td>{user.email}</td>
-                <td></td>
-
-                {/* <td>
-                  {category.status === categoryStatus.APPROVED && (
-                    <LabelStatus type="success">Approved</LabelStatus>
-                  )}
-                  {category.status === categoryStatus.UNAPPROVED && (
-                    <LabelStatus type="danger">Unapproved</LabelStatus>
-                  )}
-                </td> */}
+                <td>{user?.email}</td>
+                <td>{renderUserStatus(Number(user?.status))}</td>
+                <td>{renderUserRole(Number(user?.role))}</td>
                 <td>
                   <div className="flex gap-5 text-gray-400">
                     <ActionView></ActionView>

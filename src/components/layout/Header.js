@@ -18,18 +18,18 @@ const headerItem = [
   },
 ];
 
-function getLastName(name) {
-  if (!name) return " ";
-  const length = name.split(" ").length;
-  return name.split(" ")[length - 1];
-}
+// function getLastName(name) {
+//   if (!name) return " ";
+//   const length = name.split(" ").length;
+//   return name.split(" ")[length - 1];
+// }
 
 const Header = () => {
   const { userInfo } = useAuth();
   return (
     <header className="py-5">
       <div className="container">
-        <div className="flex items-center">
+        <div className="flex items-center justify-between">
           <NavLink to="/">
             <img srcSet="/logo.png 2x" alt="" className="block max-w-[40px]" />
           </NavLink>
@@ -40,7 +40,7 @@ const Header = () => {
               </li>
             ))}
           </ul>
-          <div className="relative w-full max-w-[320px] border border-[#cfcfcf] rounded-lg px-4 py-4 ml-auto mr-5 flex items-center">
+          {/* <div className="relative w-full max-w-[320px] border border-[#cfcfcf] rounded-lg px-4 py-4 ml-auto mr-5 flex items-center">
             <input
               type="text"
               className="flex-1 pr-[45px] placeholder:font-normal placeholder:text-[#999]"
@@ -76,7 +76,7 @@ const Header = () => {
                 />
               </svg>
             </span>
-          </div>
+          </div> */}
           {!userInfo ? (
             <Button
               to="/sign-up"
@@ -85,11 +85,14 @@ const Header = () => {
               Sign up
             </Button>
           ) : (
-            <div>
-              <span>Welcome back, </span>
-              <strong className="text-primary">
-                {getLastName(userInfo?.displayName)}
-              </strong>
+            <div className="flex items-center gap-5">
+              <Button
+                type="button"
+                className="bg-primary-gradient text-white py-4 px-4 h-[58px] rounded-lg"
+                to="/dashboard"
+              >
+                Dashboard
+              </Button>
             </div>
           )}
         </div>
