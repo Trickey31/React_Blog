@@ -109,6 +109,7 @@ const UserTable = () => {
                 <td>{renderUserRole(Number(user?.role))}</td>
                 <td>
                   <div className="flex gap-5 text-gray-400">
+                    {/* <ActionView></ActionView> */}
                     <ActionEdit
                       onClick={() => navigate(`/manage/profile?id=${user.id}`)}
                     ></ActionEdit>
