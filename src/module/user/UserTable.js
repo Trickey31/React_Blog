@@ -1,13 +1,15 @@
-import { ActionDelete, ActionView } from "components/action";
+import { ActionDelete, ActionEdit } from "components/action";
 import { LabelStatus } from "components/label";
 import { Table } from "components/table";
 import { db } from "firebase-app/firebase-config";
 import { collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { userRole, userStatus } from "utils/constant";
 
 const UserTable = () => {
+  const navigate = useNavigate();
   const [userList, setUserList] = useState([]);
   useEffect(() => {
     const colRef = collection(db, "users");
@@ -107,12 +109,9 @@ const UserTable = () => {
                 <td>{renderUserRole(Number(user?.role))}</td>
                 <td>
                   <div className="flex gap-5 text-gray-400">
-                    <ActionView></ActionView>
-                    {/* <ActionEdit
-                      onClick={() =>
-                        navigate(`/manage/update-category?id=${category.id}`)
-                      }
-                    ></ActionEdit> */}
+                    <ActionEdit
+                      onClick={() => navigate(`/manage/profile?id=${user.id}`)}
+                    ></ActionEdit>
                     <ActionDelete
                       onClick={() => handleDeleteUser(user.id)}
                     ></ActionDelete>
