@@ -4,8 +4,6 @@ import React from "react";
 import UserTable from "./UserTable";
 
 const UserManage = () => {
-  // const [total, setTotal] = useState(0);
-
   const handleLoadMoreUser = () => {};
   return (
     <div>
