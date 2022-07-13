@@ -49,7 +49,6 @@ const UserTable = () => {
         return <LabelStatus type="success">Active</LabelStatus>;
       case userStatus.BAN:
         return <LabelStatus type="danger">Ban</LabelStatus>;
-
       default:
         break;
     }
@@ -85,7 +84,7 @@ const UserTable = () => {
             userList.map((user) => (
               <tr key={user.id}>
                 <td title={user.id}>{user.id.slice(0, 5) + "..."}</td>
-                <td className="whitespace-nowrap">
+                <td>
                   <div className="flex items-center gap-3">
                     <img
                       src={user?.avatar}
@@ -105,7 +104,7 @@ const UserTable = () => {
                 <td>
                   <em className="text-gray-400">{user?.username}</em>
                 </td>
-                <td>{user?.email}</td>
+                <td title={user?.email}>{user?.email.slice(0, 5) + "..."}</td>
                 <td>{renderUserStatus(Number(user?.status))}</td>
                 <td>{renderUserRole(Number(user?.role))}</td>
                 <td>

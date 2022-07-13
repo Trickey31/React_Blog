@@ -1,3 +1,4 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import { Button } from "components/button";
 import { Radio } from "components/checkbox";
 import { Field, FieldCheckboxes } from "components/field";
@@ -10,11 +11,23 @@ import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import useFirebaseImage from "hooks/useFirebaseImage";
 import DashboardHeading from "module/dashboard/DashboardHeading";
 import React from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import slugify from "slugify";
 import { userRole, userStatus } from "utils/constant";
 import * as Yup from "yup";
+
+const schema = Yup.object({
+  fullname: Yup.string().required("Please enter your fullname"),
+  email: Yup.string().email().required("Please enter your email"),
+  password: Yup.string()
+    .min(8, "Password contain at least 8 characters")
+    .matches(
+      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/,
+      "Password contain at least 1 digit, 1 lowercase, 1 uppercase"
+    ),
+});
 
 const UserAddNew = () => {
   const {
@@ -24,7 +37,7 @@ const UserAddNew = () => {
     reset,
     setValue,
     getValues,
-    formState: { isSubmitting, isValid },
+    formState: { errors, isSubmitting, isValid },
   } = useForm({
     mode: "onChange",
     defaultValues: {
@@ -37,6 +50,7 @@ const UserAddNew = () => {
       avatar: "",
       createdAt: new Date(),
     },
+    resolver: yupResolver(schema),
   });
   const {
     image,
@@ -53,7 +67,8 @@ const UserAddNew = () => {
         fullname: values.fullname,
         username: slugify(values.username || values.fullname, {
           lower: true,
-          replacement: "",
+          replacement: " ",
+          trim: true,
         }),
         email: values.email,
         password: values.password,
@@ -80,6 +95,12 @@ const UserAddNew = () => {
   };
   const watchStatus = watch("status");
   const watchRole = watch("role");
+  useEffect(() => {
+    const arrErr = Object.values(errors);
+    if (arrErr.length > 0) {
+      toast.error(arrErr[0].message, { pauseOnHover: false, delay: 0 });
+    }
+  }, [errors]);
   return (
     <div>
       <DashboardHeading
