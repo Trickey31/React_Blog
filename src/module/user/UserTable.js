@@ -110,7 +110,9 @@ const UserTable = () => {
                   <div className="flex gap-5 text-gray-400">
                     {/* <ActionView></ActionView> */}
                     <ActionEdit
-                      onClick={() => navigate(`/manage/profile?id=${user.id}`)}
+                      onClick={() =>
+                        navigate(`/manage/update-user?id=${user.id}`)
+                      }
                     ></ActionEdit>
                     <ActionDelete
                       onClick={() => handleDeleteUser(user)}
