@@ -23,7 +23,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "components/button";
 import { debounce } from "lodash";
 
-const CATEGORY_PER_PAGE = 1;
+const CATEGORY_PER_PAGE = 10;
 
 const CategoryManage = () => {
   const navigate = useNavigate();
@@ -42,10 +42,8 @@ const CategoryManage = () => {
           )
         : query(colRef, limit(CATEGORY_PER_PAGE));
       const documentSnapshots = await getDocs(newRef);
-
       const lastVisible =
         documentSnapshots.docs[documentSnapshots.docs.length - 1];
-      setLastDoc(lastVisible);
 
       onSnapshot(colRef, (snapshot) => {
         setTotal(snapshot.size);
@@ -53,7 +51,7 @@ const CategoryManage = () => {
 
       onSnapshot(newRef, (snapshot) => {
         const results = [];
-        snapshot.forEach(
+        snapshot.forEach((doc) =>
           results.push({
             id: doc.id,
             ...doc.data(),
@@ -61,6 +59,7 @@ const CategoryManage = () => {
         );
         setCategoryList(results);
       });
+      setLastDoc(lastVisible);
     }
     fetchData();
   }, [filter]);
@@ -85,7 +84,7 @@ const CategoryManage = () => {
   const handleLoadMoreCategory = async () => {
     const nextRef = query(
       collection(db, "categories"),
-      startAfter(lastDoc),
+      startAfter(lastDoc || 0),
       limit(CATEGORY_PER_PAGE)
     );
     onSnapshot(nextRef, (snapshot) => {
@@ -99,7 +98,6 @@ const CategoryManage = () => {
       setCategoryList([...categoryList, ...results]);
     });
     const documentSnapshots = await getDocs(nextRef);
-
     const lastVisible =
       documentSnapshots.docs[documentSnapshots.docs.length - 1];
     setLastDoc(lastVisible);
