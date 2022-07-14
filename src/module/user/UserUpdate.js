@@ -4,10 +4,16 @@ import { Field, FieldCheckboxes } from "components/field";
 import ImageUpload from "components/image/ImageUpload";
 import { Input } from "components/input";
 import { Label } from "components/label";
+import { db } from "firebase-app/firebase-config";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import useFirebaseImage from "hooks/useFirebaseImage";
 import DashboardHeading from "module/dashboard/DashboardHeading";
 import React from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import slugify from "slugify";
 import { userRole, userStatus } from "utils/constant";
 
 const UserUpdate = () => {
@@ -15,11 +21,23 @@ const UserUpdate = () => {
     watch,
     control,
     handleSubmit,
+    reset,
     formState: { isSubmitting },
   } = useForm({
     mode: "onChange",
     defaultValues: {},
   });
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const userId = searchParams.get("id");
+  useEffect(() => {
+    async function fetchData() {
+      const colRef = doc(db, "users", userId);
+      const singleDoc = await getDoc(colRef);
+      reset(singleDoc.data());
+    }
+    fetchData();
+  }, [reset, userId]);
   // const {
   //   image,
   //   progress,
@@ -27,9 +45,20 @@ const UserUpdate = () => {
   //   handleResetUpload,
   //   handleSelectImage,
   // } = useFirebaseImage(getValues, setValue);
-  const handleUpdateUser = (values) => {};
+  const handleUpdateUser = async (values) => {
+    const colRef = doc(db, "users", userId);
+    await updateDoc(colRef, {
+      fullname: values.fullname,
+      username: slugify(values.username, { lower: true }),
+      email: values.email,
+      password: values.password,
+    });
+    toast.success("Update user successfully");
+    navigate("/manage/user");
+  };
   const watchStatus = watch("status");
   const watchRole = watch("role");
+  if (!userId) return null;
   return (
     <div>
       <DashboardHeading
