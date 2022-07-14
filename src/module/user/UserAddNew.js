@@ -45,9 +45,9 @@ const UserAddNew = () => {
       username: "",
       email: "",
       password: "",
+      avatar: "",
       status: userStatus.ACTIVE,
       role: userRole.USER,
-      avatar: "",
       createdAt: new Date(),
     },
     resolver: yupResolver(schema),
@@ -60,6 +60,7 @@ const UserAddNew = () => {
     handleSelectImage,
   } = useFirebaseImage(getValues, setValue);
   const handleCreateUser = async (values) => {
+    console.log(values);
     if (!isValid) return;
     try {
       await createUserWithEmailAndPassword(auth, values.email, values.password);
@@ -72,9 +73,9 @@ const UserAddNew = () => {
         }),
         email: values.email,
         password: values.password,
-        status: Number(userStatus.status),
-        role: Number(userRole.role),
-        avatar: values.image,
+        avatar: image,
+        status: Number(values.status),
+        role: Number(values.role),
         createdAt: serverTimestamp(),
       });
       toast.success("Create new user successfully!");
@@ -90,6 +91,7 @@ const UserAddNew = () => {
       });
       handleResetUpload();
     } catch (error) {
+      console.log(error.message);
       toast.error("Cannot create new user");
     }
   };
