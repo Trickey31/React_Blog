@@ -2,7 +2,6 @@ import { ActionDelete, ActionEdit } from "components/action";
 import { LabelStatus } from "components/label";
 import { Table } from "components/table";
 import { db } from "firebase-app/firebase-config";
-import { deleteUser } from "firebase/auth";
 import { collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -39,7 +38,7 @@ const UserTable = () => {
       if (result.isConfirmed) {
         Swal.fire("Deleted!", "Your file has been deleted.", "success");
         await deleteDoc(colRef);
-        await deleteUser(user);
+        // await deleteUser(user);
       }
     });
   };
@@ -114,7 +113,7 @@ const UserTable = () => {
                       onClick={() => navigate(`/manage/profile?id=${user.id}`)}
                     ></ActionEdit>
                     <ActionDelete
-                      onClick={() => handleDeleteUser(user.id)}
+                      onClick={() => handleDeleteUser(user)}
                     ></ActionDelete>
                   </div>
                 </td>
