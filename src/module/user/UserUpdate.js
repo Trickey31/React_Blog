@@ -22,6 +22,8 @@ const UserUpdate = () => {
     control,
     handleSubmit,
     reset,
+    getValues,
+    setValue,
     formState: { isSubmitting },
   } = useForm({
     mode: "onChange",
@@ -30,21 +32,30 @@ const UserUpdate = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const userId = searchParams.get("id");
+  const imageURL = getValues("avatar");
+  const imageRegex = /%2F(\S+)\?/gm.exec(imageURL);
+  const image_name =
+    imageRegex?.length > 0 ? /%2F(\S+)\?/gm.exec(imageURL)[1] : "";
+  useEffect(() => {
+    setImage(imageURL);
+  }, []);
   useEffect(() => {
     async function fetchData() {
+      if (!userId) return;
       const colRef = doc(db, "users", userId);
-      const singleDoc = await getDoc(colRef);
-      reset(singleDoc.data());
+      const docData = await getDoc(colRef);
+      reset(docData && docData.data());
     }
     fetchData();
   }, [reset, userId]);
-  // const {
-  //   image,
-  //   progress,
-  //   handleDeleteImage,
-  //   handleResetUpload,
-  //   handleSelectImage,
-  // } = useFirebaseImage(getValues, setValue);
+  const {
+    image,
+    setImage,
+    progress,
+    handleDeleteImage,
+    handleResetUpload,
+    handleSelectImage,
+  } = useFirebaseImage(getValues, setValue, image_name, deleteAvatar);
   const handleUpdateUser = async (values) => {
     const colRef = doc(db, "users", userId);
     await updateDoc(colRef, {
@@ -52,10 +63,17 @@ const UserUpdate = () => {
       username: slugify(values.username, { lower: true }),
       email: values.email,
       password: values.password,
+      avatar: image,
     });
     toast.success("Update user successfully");
     navigate("/manage/user");
   };
+  async function deleteAvatar() {
+    const colRef = doc(db, "users", userId);
+    await updateDoc(colRef, {
+      avatar: "",
+    });
+  }
   const watchStatus = watch("status");
   const watchRole = watch("role");
   if (!userId) return null;
@@ -67,13 +85,13 @@ const UserUpdate = () => {
       ></DashboardHeading>
       <form onSubmit={handleSubmit(handleUpdateUser)}>
         <div className="w-[200px] h-[200px] mx-auto mb-10">
-          {/* <ImageUpload
+          <ImageUpload
             className="!rounded-full h-full"
             progress={progress}
             handleDeleteImage={handleDeleteImage}
             onChange={handleSelectImage}
-            image={image}
-          ></ImageUpload> */}
+            image={image || imageURL}
+          ></ImageUpload>
         </div>
         <div className="form-layout">
           <Field>
