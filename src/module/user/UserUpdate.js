@@ -13,7 +13,6 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import slugify from "slugify";
 import { userRole, userStatus } from "utils/constant";
 
 const UserUpdate = () => {
@@ -24,7 +23,7 @@ const UserUpdate = () => {
     reset,
     getValues,
     setValue,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isValid },
   } = useForm({
     mode: "onChange",
     defaultValues: {},
@@ -36,9 +35,11 @@ const UserUpdate = () => {
   const imageRegex = /%2F(\S+)\?/gm.exec(imageURL);
   const image_name =
     imageRegex?.length > 0 ? /%2F(\S+)\?/gm.exec(imageURL)[1] : "";
+  const { image, setImage, progress, handleDeleteImage, handleSelectImage } =
+    useFirebaseImage(getValues, setValue, image_name, deleteAvatar);
   useEffect(() => {
     setImage(imageURL);
-  }, []);
+  }, [imageURL, setImage]);
   useEffect(() => {
     async function fetchData() {
       if (!userId) return;
@@ -48,25 +49,21 @@ const UserUpdate = () => {
     }
     fetchData();
   }, [reset, userId]);
-  const {
-    image,
-    setImage,
-    progress,
-    handleDeleteImage,
-    handleResetUpload,
-    handleSelectImage,
-  } = useFirebaseImage(getValues, setValue, image_name, deleteAvatar);
+
   const handleUpdateUser = async (values) => {
-    const colRef = doc(db, "users", userId);
-    await updateDoc(colRef, {
-      fullname: values.fullname,
-      username: slugify(values.username, { lower: true }),
-      email: values.email,
-      password: values.password,
-      avatar: image,
-    });
-    toast.success("Update user successfully");
-    navigate("/manage/user");
+    if (!isValid) return;
+    try {
+      const colRef = doc(db, "users", userId);
+      await updateDoc(colRef, {
+        ...values,
+        avatar: image,
+      });
+      toast.success("Update user successfully");
+      navigate("/manage/user");
+    } catch (error) {
+      console.log(error);
+      toast.error("Update user failed");
+    }
   };
   async function deleteAvatar() {
     const colRef = doc(db, "users", userId);
@@ -90,7 +87,7 @@ const UserUpdate = () => {
             progress={progress}
             handleDeleteImage={handleDeleteImage}
             onChange={handleSelectImage}
-            image={image || imageURL}
+            image={image}
           ></ImageUpload>
         </div>
         <div className="form-layout">
@@ -197,7 +194,7 @@ const UserUpdate = () => {
           isLoading={isSubmitting}
           disabled={isSubmitting}
         >
-          Add new user
+          Update user
         </Button>
       </form>
     </div>

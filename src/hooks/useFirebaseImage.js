@@ -53,7 +53,7 @@ export default function useFirebaseImage(
     const storage = getStorage();
     const imageRef = ref(
       storage,
-      "images/" + image_name || getValues("image_name")
+      "images/" + (image_name || getValues("image_name"))
     );
     // Delete the file
     deleteObject(imageRef)
