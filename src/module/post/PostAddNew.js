@@ -15,6 +15,8 @@ import { useEffect } from "react";
 import {
   addDoc,
   collection,
+  doc,
+  getDoc,
   getDocs,
   query,
   serverTimestamp,
@@ -34,7 +36,7 @@ const PostAddNew = () => {
       title: "",
       slug: "",
       status: 2,
-      categoryId: "",
+      category: {},
       hot: false,
       image: "",
     },
@@ -72,7 +74,7 @@ const PostAddNew = () => {
         title: "",
         slug: "",
         status: 2,
-        categoryId: "",
+        category: {},
         hot: false,
         image: "",
       });
@@ -103,8 +105,14 @@ const PostAddNew = () => {
     getData();
   }, []);
 
-  const handleClickCategory = (item) => {
-    setValue("categoryId", item.id);
+  const handleClickCategory = async (item) => {
+    const colRef = doc(db, "categories", item.id);
+    const docData = await getDoc(colRef);
+    console.log(docData.id);
+    setValue("category", {
+      id: docData.id,
+      ...docData.data(),
+    });
     setSelectCategory(item);
   };
 
